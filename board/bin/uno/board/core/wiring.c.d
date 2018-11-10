@@ -1,5 +1,5 @@
-/media/devilsu/M/Git/CrazyChair/broad/bin/uno/broad/core/wiring_pulse.c.o: \
- /usr/share/arduino/hardware/arduino//cores/arduino/wiring_pulse.c \
+/media/devilsu/M/Git/CrazyChair/board/bin/uno/board/core/wiring.c.o: \
+ /usr/share/arduino/hardware/arduino//cores/arduino/wiring.c \
  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_private.h \
  /usr/share/arduino/hardware/arduino//cores/arduino/Arduino.h \
  /usr/share/arduino/hardware/arduino//cores/arduino/binary.h \

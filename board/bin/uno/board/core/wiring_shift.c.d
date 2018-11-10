@@ -1,4 +1,4 @@
-/media/devilsu/M/Git/CrazyChair/broad/bin/uno/broad/core/wiring_shift.c.o: \
+/media/devilsu/M/Git/CrazyChair/board/bin/uno/board/core/wiring_shift.c.o: \
  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_shift.c \
  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_private.h \
  /usr/share/arduino/hardware/arduino//cores/arduino/Arduino.h \

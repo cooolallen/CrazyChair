@@ -1,5 +1,5 @@
-/media/devilsu/M/Git/CrazyChair/broad/bin/uno/broad/core/wiring_digital.c.o: \
- /usr/share/arduino/hardware/arduino//cores/arduino/wiring_digital.c \
+/media/devilsu/M/Git/CrazyChair/board/bin/uno/board/core/WInterrupts.c.o: \
+ /usr/share/arduino/hardware/arduino//cores/arduino/WInterrupts.c \
  /usr/share/arduino/hardware/arduino//cores/arduino/wiring_private.h \
  /usr/share/arduino/hardware/arduino//cores/arduino/Arduino.h \
  /usr/share/arduino/hardware/arduino//cores/arduino/binary.h \
