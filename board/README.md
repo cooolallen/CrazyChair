@@ -1,4 +1,4 @@
-# broad
+# board
 To compile, type in terminal: 
 make
 To upload: (make sure arduino is plugged in)
