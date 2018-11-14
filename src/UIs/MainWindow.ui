@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>148</height>
+    <width>446</width>
+    <height>221</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -57,7 +57,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QPushButton" name="led_button">
+         <widget class="QPushButton" name="ledButton">
           <property name="text">
            <string>On</string>
           </property>
@@ -92,12 +92,24 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>323</width>
+     <width>446</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuCrazyChair">
+    <property name="title">
+     <string>CrazyChair</string>
+    </property>
+    <addaction name="actionRecord_Data"/>
+   </widget>
+   <addaction name="menuCrazyChair"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionRecord_Data">
+   <property name="text">
+    <string>Record Data</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
