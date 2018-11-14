@@ -76,8 +76,8 @@ void get_messages_from_serial()
             case LED:
             {
                 led_on=read_i8();
-                if(led_on)digitalWrite(BROADLED_PIN, HIGH);
-                else	  digitalWrite(BROADLED_PIN, LOW);
+                if(led_on==1)digitalWrite(BROADLED_PIN, HIGH);
+                else	       digitalWrite(BROADLED_PIN, LOW);
                 break;
             }
             default:
