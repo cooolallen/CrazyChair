@@ -5,18 +5,26 @@ from PyQt5.QtWidgets import QMainWindow
 from UIs.ui_MainWindow import Ui_MainWindow
 from PyQt5.QtCore import QTimer
 
+from ArduinoTest import ArduinoTest
+
 import serial
+import struct
 
 class MainWindow(QMainWindow):
-	def __init__(self, port, parent=None):
+	def __init__(self, test=False, port=None, parent=None):
 		super(MainWindow, self).__init__(parent)
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 		self.led_is_on = False
-		self.arduino = serial.Serial(port, 9600, timeout=.1)
 		self.voltage_timer = QTimer()
 		self.voltage_timer.start(100)		# update every 0.1 second
+		self.init = False					# will be removed when hand-shake is added
 
+		# check it is test mode or not (arduino don't need to connect)
+		if test:
+			self.arduino = ArduinoTest()
+		else:
+			self.arduino = serial.Serial(port, 9600, timeout=.1)
 
 		# Connection
 		self.ui.led_button.clicked.connect(self.led_button_clicked)
@@ -33,6 +41,15 @@ class MainWindow(QMainWindow):
 		self.ui.led_button.setText(msg)
 
 	def voltage_update(self):
+		# skip the first update to making sure we get the whole string
+		if not self.init:
+			self.init = True
+			return
+
 		data = self.arduino.readline().decode('utf-8')
 		if data:
 			self.ui.voltage.setText(data)
+			# send the message as raw binary
+			# self.arduino.write(struct.pack('>B',led_out))
+
+	
