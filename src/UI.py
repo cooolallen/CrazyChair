@@ -108,11 +108,13 @@ class DataRecorder(QDialog):
 		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, '0.png')))
 		self.recording = False
 		self.measure = defaultdict(list)
+		self.guiTimer = QTimer()
+		self.guiTimer.start(0)		# update every 0.1 second
 
 		# Connection
 		self.ui.ComboClass.currentIndexChanged.connect(self.setPosturePicture)
 		self.ui.RecordingButton.clicked.connect(self.recordingClicked)
-
+		self.guiTimer.timeout.connect(self.guiUpdate)
 		# show the window
 		self.show()
 
@@ -128,7 +130,10 @@ class DataRecorder(QDialog):
 			return
 
 		self.recording = not self.recording
+		# using guiUpdate to update the gui
+		
+	def guiUpdate(self):
 		buttonMsg = 'Stop Recording' if self.recording else 'Start Recording'
 		self.ui.ComboClass.setEnabled(not self.recording)
 		self.ui.RecordingButton.setText(buttonMsg)
-		print('recording:', self.recording)
+
