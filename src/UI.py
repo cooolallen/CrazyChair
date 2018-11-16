@@ -26,7 +26,6 @@ class MainWindow(QMainWindow):
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 
-		self.ledOn = False
 		self.voltageTimer = QTimer()
 		self.voltageTimer.start(100)		# update every 0.1 second
 		self.guiTimer = QTimer()
@@ -45,24 +44,15 @@ class MainWindow(QMainWindow):
 			self.arduino = serial.Serial(port, 9600, timeout=.1)
 
 		# Connection
-		self.ui.ledButton.clicked.connect(self.ledButtonClicked)
 		self.ui.actionRecord_Data.triggered.connect(self.recordData)
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
 		self.guiTimer.timeout.connect(self.guiUpdate)
-
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
 
 		# Show the main window
 		self.show()
-
-	def ledButtonClicked(self):
-		value = b'0' if self.ledOn else b'1'
-		msg = 'Off' if self.ledOn else 'On'
-		self.arduino.write(value)
-		self.ledOn = not self.ledOn
-		self.ui.ledButton.setText(msg)
 
 	def voltageUpdate(self):
 		# skip the first update to making sure we get the whole string
@@ -72,17 +62,15 @@ class MainWindow(QMainWindow):
 
 		data = self.arduino.readline().decode('utf-8')
 		if data:
-			self.ui.voltage.setText(data)
 			self.time = str(datetime.datetime.now())
 			self.measure = data
 			
 			# record the data is data recorder is open
 			if self.recorder is not None and self.recorder.recording:
 				posture_id = self.recorder.ui.ComboClass.currentIndex()
-				self.recorder.measure[posture_id].append(' '.join((self.time, self.measure)))
+				self.recorder.measure[posture_id].append('\t'.join((self.time, self.measure)))
 
 
-			
 			# send the message as raw binary
 			# self.arduino.write(struct.pack('>B',led_out))
 
@@ -125,7 +113,9 @@ class MainWindow(QMainWindow):
 			self.ui.bottomBack.setStyleSheet('QWidget { background: %s }' % colors[0])
 			self.ui.bottomLeft.setStyleSheet('QWidget { background: %s }' % colors[1])
 			self.ui.bottomRight.setStyleSheet('QWidget { background: %s }' % colors[2])
-		
+			self.ui.backLeft.setStyleSheet('QWidget { background: %s }' % colors[3])
+			self.ui.backRight.setStyleSheet('QWidget { background: %s }' % colors[4])
+			self.ui.backDown.setStyleSheet('QWidget { background: %s }' % colors[5])
 
 
 class DataRecorder(QDialog):
@@ -166,4 +156,3 @@ class DataRecorder(QDialog):
 		buttonMsg = 'Stop Recording' if self.recording else 'Start Recording'
 		self.ui.ComboClass.setEnabled(not self.recording)
 		self.ui.RecordingButton.setText(buttonMsg)
-
