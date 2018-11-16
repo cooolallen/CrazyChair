@@ -14,6 +14,7 @@ import serial
 import struct
 import datetime
 from collections import defaultdict
+from matplotlib import pyplot as plt
 from os.path import join
 import os
 
@@ -28,6 +29,9 @@ class MainWindow(QMainWindow):
 		self.ledOn = False
 		self.voltageTimer = QTimer()
 		self.voltageTimer.start(100)		# update every 0.1 second
+		self.guiTimer = QTimer()
+		self.guiTimer.start(0)
+		self.cm = plt.get_cmap('cool')
 		self.init = False					# will be removed when hand-shake is added
 		self.recorder = None
 		self.time = None
@@ -42,8 +46,10 @@ class MainWindow(QMainWindow):
 
 		# Connection
 		self.ui.ledButton.clicked.connect(self.ledButtonClicked)
-		self.voltageTimer.timeout.connect(self.voltageUpdate)
 		self.ui.actionRecord_Data.triggered.connect(self.recordData)
+		self.voltageTimer.timeout.connect(self.voltageUpdate)
+		self.guiTimer.timeout.connect(self.guiUpdate)
+
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
@@ -97,6 +103,30 @@ class MainWindow(QMainWindow):
 				for row in data:
 					file.write(row + '\n')
 
+	def guiUpdate(self):
+		# convert a list of float to 0 ~ 255 in stylesheet format
+		def getFormatColor(raw_color):
+			res = 'rgb('
+			res += ', '.join([str(int(i * 255)) for i in raw_color])
+			res += ')'
+			return res
+		
+		# convert volt into color
+		def getColorMap(volts, cm):
+			res = []
+			for v in volts.split('\t'):
+				color = cm(int(float(v) / 5.01 * 255))
+				res.append(getFormatColor(color))
+
+			return res
+
+		if self.measure is not None:
+			colors = getColorMap(self.measure, self.cm)
+			self.ui.bottomBack.setStyleSheet('QWidget { background: %s }' % colors[0])
+			self.ui.bottomLeft.setStyleSheet('QWidget { background: %s }' % colors[1])
+			self.ui.bottomRight.setStyleSheet('QWidget { background: %s }' % colors[2])
+		
+
 
 class DataRecorder(QDialog):
 	def __init__(self, parent=None):
@@ -109,7 +139,7 @@ class DataRecorder(QDialog):
 		self.recording = False
 		self.measure = defaultdict(list)
 		self.guiTimer = QTimer()
-		self.guiTimer.start(0)		# update every 0.1 second
+		self.guiTimer.start(0)
 
 		# Connection
 		self.ui.ComboClass.currentIndexChanged.connect(self.setPosturePicture)
