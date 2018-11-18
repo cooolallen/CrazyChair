@@ -8,6 +8,7 @@ from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap, QKeySequence, QGuiApplication
 
 from ArduinoTest import ArduinoTest
+from SVM import Judge
 import Constants
 
 import serial
@@ -35,6 +36,7 @@ class MainWindow(QMainWindow):
 		self.recorder = None
 		self.time = None
 		self.measure = None
+		self.judge = Judge()
 
 
 		# check it is test mode or not (arduino don't need to connect)
@@ -64,7 +66,9 @@ class MainWindow(QMainWindow):
 		if data:
 			self.time = str(datetime.datetime.now())
 			self.measure = data
-			
+			print(self.judge.predict(self.measure))
+
+
 			# record the data is data recorder is open
 			if self.recorder is not None and self.recorder.recording:
 				posture_id = self.recorder.ui.ComboClass.currentIndex()
@@ -82,6 +86,7 @@ class MainWindow(QMainWindow):
 		if val == 1:
 			self.dumpStoringData()
 		self.recorder = None
+		self.judge.initialize()
 
 	def dumpStoringData(self):
 		# dump the recording data when data recorder is done. (press ok)
