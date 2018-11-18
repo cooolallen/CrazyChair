@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UIs/RecordData.ui'
+# Form implementation generated from reading ui file 'RecordData.ui'
 #
 # Created by: PyQt5 UI code generator 5.11.3
 #
@@ -24,10 +24,6 @@ class Ui_DataRecorder(object):
         self.verticalLayout.addItem(spacerItem)
         self.ComboClass = QtWidgets.QComboBox(DataRecorder)
         self.ComboClass.setObjectName("ComboClass")
-        self.ComboClass.addItem("")
-        self.ComboClass.addItem("")
-        self.ComboClass.addItem("")
-        self.ComboClass.addItem("")
         self.ComboClass.addItem("")
         self.verticalLayout.addWidget(self.ComboClass)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
@@ -64,9 +60,5 @@ class Ui_DataRecorder(object):
         _translate = QtCore.QCoreApplication.translate
         DataRecorder.setWindowTitle(_translate("DataRecorder", "Data Recorder"))
         self.ComboClass.setItemText(0, _translate("DataRecorder", "Please select a posture"))
-        self.ComboClass.setItemText(1, _translate("DataRecorder", "class0"))
-        self.ComboClass.setItemText(2, _translate("DataRecorder", "class1"))
-        self.ComboClass.setItemText(3, _translate("DataRecorder", "class2"))
-        self.ComboClass.setItemText(4, _translate("DataRecorder", "class3"))
         self.RecordingButton.setText(_translate("DataRecorder", "Start Recording"))
 

@@ -40,26 +40,6 @@
              <string>Please select a posture</string>
             </property>
            </item>
-           <item>
-            <property name="text">
-             <string>class0</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>class1</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>class2</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>class3</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item>
