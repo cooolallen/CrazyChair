@@ -116,8 +116,6 @@ class MainWindow(QMainWindow):
 		if self.predict['cnt'] >= Constants.consecutiveFactor:
 			self.predict['predict'] = self.predict['curr_predict']
 
-		print(self.predict)
-
 	def recordData(self):
 		self.recorder = DataRecorder(self)
 		self.recorder.finished.connect(self.recordDataClose)
@@ -153,6 +151,9 @@ class MainWindow(QMainWindow):
 
 			return res
 
+
+
+		# update the pressure heatmap
 		if self.measure is not None:
 			colors = getColorMap(self.measure, self.cm)
 			self.ui.bottomBack.setStyleSheet('QWidget { background: %s }' % colors[0])
@@ -161,6 +162,12 @@ class MainWindow(QMainWindow):
 			self.ui.backLeft.setStyleSheet('QWidget { background: %s }' % colors[3])
 			self.ui.backRight.setStyleSheet('QWidget { background: %s }' % colors[4])
 			self.ui.backDown.setStyleSheet('QWidget { background: %s }' % colors[5])
+
+		# update the posture image
+		filename = str(Posture(self.predict['predict'])) + '.png'
+		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, filename)))
+		self.ui.imageHolder.show()
+
 
 
 class DataRecorder(QDialog):

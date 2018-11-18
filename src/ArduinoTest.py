@@ -1,7 +1,5 @@
 # Testing module for arduino
 # we don't need arduino plug in to test the UI
-
-
 import random
 
 class ArduinoTest(object):

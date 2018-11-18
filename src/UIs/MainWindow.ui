@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>558</width>
-    <height>493</height>
+    <height>460</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -146,7 +146,7 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,100">
         <item>
-         <widget class="QLabel" name="label_5">
+         <widget class="QLabel" name="label1">
           <property name="text">
            <string>Posture</string>
           </property>
@@ -156,7 +156,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="label">
+         <widget class="QLabel" name="imageHolder">
           <property name="text">
            <string/>
           </property>
