@@ -73,12 +73,15 @@ class MainWindow(QMainWindow):
 			self.arduino = serial.Serial(port, 9600, timeout=.1)
 
 		# Connection
-		self.ui.actionRecord_Data.triggered.connect(self.recordData)
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
+		self.ui.actionRecord_Data.triggered.connect(self.recordData)
 		self.guiTimer.timeout.connect(self.guiUpdate)
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
+
+		# Check is there are the data valid or not
+		self.judgeStatusCheck()
 
 		# Show the main window
 		self.show()
@@ -94,7 +97,6 @@ class MainWindow(QMainWindow):
 			self.time = str(datetime.datetime.now())
 			self.measure = data
 			self.updatePosture()
-
 
 			# record the data is data recorder is open
 			if self.recorder is not None and self.recorder.recording:
@@ -120,11 +122,18 @@ class MainWindow(QMainWindow):
 		self.recorder = DataRecorder(self)
 		self.recorder.finished.connect(self.recordDataClose)
 
+	def judgeStatusCheck(self):
+		# Show the data recorder window if there are no data
+		if self.judge.clf is None:
+			QMessageBox.warning(self, 'warning', 'Please record some data to initialize the service')
+			self.recordData()
+
 	def recordDataClose(self, val):
 		if val == 1:
 			self.dumpStoringData()
 		self.recorder = None
 		self.judge.initialize()
+		self.judgeStatusCheck()
 
 	def dumpStoringData(self):
 		# dump the recording data when data recorder is done. (press ok)
@@ -132,7 +141,7 @@ class MainWindow(QMainWindow):
 			filename = join(Constants.DATA_DIR, 'class' + str(class_id - 1) + '.txt')
 			with open(filename, 'w+') as file:
 				for row in data:
-					file.write(row + '\n')
+					file.write(row)
 
 	def guiUpdate(self):
 		# convert a list of float to 0 ~ 255 in stylesheet format

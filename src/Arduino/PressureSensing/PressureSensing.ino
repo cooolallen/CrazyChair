@@ -4,9 +4,9 @@ int value = 0;
 
 
 #define NUM_SAMPLES 10
-int sum1 = 0, sum2 = 0, sum3 = 0;
+int sum1 = 0, sum2 = 0, sum3 = 0, sum4 = 0, sum5 = 0, sum6 = 0;
 int sample_count = 0;
-float v1 = 0.0, v2 = 0.0, v3 = 0.0;
+float v1 = 0.0, v2 = 0.0, v3 = 0.0, v4 = 0.0, v5 = 0.0, v6 = 0.0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -36,6 +36,9 @@ void loop() {
         sum1 += analogRead(A0);
         sum2 += analogRead(A1);
         sum3 += analogRead(A2);
+        sum4 += analogRead(A3);
+        sum5 += analogRead(A4);
+        sum6 += analogRead(A5);
         sample_count++;
         delay(10);
     }
@@ -45,15 +48,26 @@ void loop() {
     v1 = ((float)sum1 / (float)NUM_SAMPLES * 5.015) / 1024.0;
     v2 = ((float)sum2 / (float)NUM_SAMPLES * 5.015) / 1024.0;
     v3 = ((float)sum3 / (float)NUM_SAMPLES * 5.015) / 1024.0;
+    v4 = ((float)sum4 / (float)NUM_SAMPLES * 5.015) / 1024.0;
+    v5 = ((float)sum5 / (float)NUM_SAMPLES * 5.015) / 1024.0;
+    v6 = ((float)sum6 / (float)NUM_SAMPLES * 5.015) / 1024.0;
     // send voltage for display on Serial Monitor
     Serial.print(v1);
     Serial.print("\t");
     Serial.print(v2);
     Serial.print("\t");
-    Serial.println(v3);
+    Serial.print(v3);
+    Serial.print("\t");
+    Serial.print(v4);
+    Serial.print("\t");
+    Serial.print(v5);
+    Serial.print("\t");
+    Serial.println(v6);
     sample_count = 0;
     sum1 = 0;
     sum2 = 0;
     sum3 = 0;
-  
+    sum4 = 0;
+    sum5 = 0;
+    sum6 = 0;
 }
