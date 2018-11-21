@@ -94,7 +94,7 @@ void get_messages_from_serial()
                 //get voltage
                 //take a number of analog samples and add them up
                 //sample_count=0;
-                sum1=sum2=sum3=sample_count=0;
+                sum1=sum2=sum3=sum4=sum5=sum6=sample_count=0;
                 while(sample_count<NUM_SAMPLES)
                 {
                     sum1+=analogRead(A0);

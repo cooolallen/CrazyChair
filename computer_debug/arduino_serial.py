@@ -11,6 +11,7 @@ if __name__ == '__main__':
     except Exception as e:
         raise e
 
+    print(serial_file)
     is_connected=False
     # Initialize communication with Arduino
     while not is_connected:
@@ -37,6 +38,9 @@ if __name__ == '__main__':
     print(r)
 
     while True:
-        order, value = [int(x) for x in raw_input("Enter two numbers here: ").split()]
-        send_command(serial_file, order, value)
+        r=get_pressure(serial_file)
+        print(r)
+        time.sleep(0.1)
+        # order, value = [int(x) for x in raw_input("Enter two numbers here: ").split()]
+        # send_command(serial_file, order, value)
 
