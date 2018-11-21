@@ -8,7 +8,6 @@
 #define RESISTOR_PIN 4
 
 #define NUM_SAMPLES 10
-#define VDD 515
 
 // If DEBUG is set to true, the arduino will send back all the received messages
 #define DEBUG false

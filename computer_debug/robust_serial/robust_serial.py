@@ -115,8 +115,13 @@ def send_command(f, order, value, debug=False):
     write_i8(f, order)
     if order==Order.LED.value:
         write_i8(f, value)
-    # elif order==Order.RESISTOR:
+    elif order==Order.RESISTOR.value:
     #     # do nothing
+        print("RES")
+        r1=read_i16(f)
+        r2=read_i16(f)
+        r3=read_i16(f)
+        print(r1,r2,r3)
     # elif order==Order.VIBRATOR:
     #     # do nothing    
     #else:
@@ -126,7 +131,20 @@ def send_command(f, order, value, debug=False):
     if debug:
         print("send order", order, ", value:", value)
 
+    # read acck from arduino
     r_order=read_order(f)
-    decode_order(f, r_order, debug=True)
+    decode_order(f, r_order, debug)
 
     return
+
+def get_pressure(f, debug=False):
+    write_i8(f, Order.RESISTOR.value)
+    r_lst=[]
+    for _ in range(6):
+        r_lst.append(read_i16(f))
+    
+    # ack from arduino
+    r_order=read_order(f)
+    decode_order(f, r_order, debug)
+
+    return r_lst

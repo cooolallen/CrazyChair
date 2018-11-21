@@ -1,7 +1,8 @@
 import time
 
-from robust_serial import Order, write_i8, write_i16, read_i8
+from robust_serial import Order, write_i8, write_i16, read_i8, read_i16
 from robust_serial import write_order, read_order, decode_order, send_command
+from robust_serial import get_pressure
 from robust_serial.utils import open_serial_port
 
 if __name__ == '__main__':
@@ -26,6 +27,14 @@ if __name__ == '__main__':
 
     print("Connected to Arduino")
     serial_file.flush()
+    
+    # time.sleep(2)
+    # num_samples=read_i16(serial_file)
+    # print(num_samples)
+    #serial_file.flush()
+
+    r=get_pressure(serial_file)
+    print(r)
 
     while True:
         order, value = [int(x) for x in raw_input("Enter two numbers here: ").split()]
