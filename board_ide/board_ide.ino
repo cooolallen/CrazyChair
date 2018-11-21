@@ -126,6 +126,20 @@ void get_messages_from_serial()
 
                 break;
             }
+            case VIBRATOR:
+            {
+                digitalWrite(VIBRATOR_PIN, HIGH);
+                delay(200);
+                digitalWrite(VIBRATOR_PIN, LOW);
+                delay(100);
+                digitalWrite(VIBRATOR_PIN, HIGH);
+                delay(200);
+                digitalWrite(VIBRATOR_PIN, LOW);
+                delay(100);
+                digitalWrite(VIBRATOR_PIN, HIGH);
+                delay(200);
+                digitalWrite(VIBRATOR_PIN, LOW);
+            }
             default:
             {
 				write_order(ERROR);
