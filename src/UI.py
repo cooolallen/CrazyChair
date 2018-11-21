@@ -11,6 +11,7 @@ from PyQt5.QtGui import QPixmap, QKeySequence, QGuiApplication
 
 from ArduinoTest import ArduinoTest
 from SVM import Judge
+from Arduino.Arduino import Arduino
 import Constants
 
 import serial
@@ -54,7 +55,9 @@ class MainWindow(QMainWindow):
 		self.ui.setupUi(self)
 
 		self.voltageTimer = QTimer()
-		self.voltageTimer.start(100)		# update every 0.1 second
+		self.voltageTimer.start(150)		# update every 0.15 second
+		self.vibrateTimer = QTimer()
+		self.vibrateTimer.start(3000)		# vibrate every 3 second
 		self.guiTimer = QTimer()
 		self.guiTimer.start(0)
 		self.cm = plt.get_cmap('cool')
@@ -70,12 +73,13 @@ class MainWindow(QMainWindow):
 		if test:
 			self.arduino = ArduinoTest()
 		else:
-			self.arduino = serial.Serial(port, 9600, timeout=.1)
+			self.arduino = Arduino()
 
 		# Connection
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
 		self.ui.actionRecord_Data.triggered.connect(self.recordData)
 		self.guiTimer.timeout.connect(self.guiUpdate)
+		self.vibrateTimer.timeout.connect(self.vibrateTest)
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
@@ -86,16 +90,21 @@ class MainWindow(QMainWindow):
 		# Show the main window
 		self.show()
 
+	def vibrateTest(self):
+		self.arduino.vibrate()
+
+
 	def voltageUpdate(self):
 		# skip the first update to making sure we get the whole string
 		if not self.init:
 			self.init = True
 			return
 
-		data = self.arduino.readline().decode('utf-8')
+		data = self.arduino.get_pressure()
 		if data:
 			self.time = str(datetime.datetime.now())
-			self.measure = data
+			# self.measure = data
+			self.measure = "\t".join(map(lambda x: str(x/100), data))
 			self.updatePosture()
 
 			# record the data is data recorder is open

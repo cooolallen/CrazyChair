@@ -111,20 +111,17 @@ def send_command(f, order, value, debug=False):
     :param value: (int8_t), (int16_t) or (int32_t)
     :param debug: (bool) whether to print or not received messages
     """
-    #write_order(f, order)
     write_i8(f, order)
     if order==Order.LED.value:
         write_i8(f, value)
     elif order==Order.RESISTOR.value:
-    #     # do nothing
-        print("RES")
-        r1=read_i16(f)
-        r2=read_i16(f)
-        r3=read_i16(f)
-        print(r1,r2,r3)
+        r_lst=[]
+        for _ in range(6):
+            r_lst.append(read_i16(f))
+        print(r_lst)
     # elif order==Order.VIBRATOR:
-    #     # do nothing    
-    #else:
+        # do nothing
+    # else:
         # do nothing
 
 
@@ -136,7 +133,7 @@ def send_command(f, order, value, debug=False):
     decode_order(f, r_order, debug)
 
     return
-
+    
 def get_pressure(f, debug=False):
     write_i8(f, Order.RESISTOR.value)
     r_lst=[]
@@ -148,3 +145,14 @@ def get_pressure(f, debug=False):
     decode_order(f, r_order, debug)
 
     return r_lst
+
+def vibrate(f, debug=False):
+    write_order(f, Order.VIBRATOR)
+    # maybe add different vibration modes?
+    #write_i8(mode)
+
+    # ack from arduino
+    r_order=read_order(f)
+    decode_order(f, r_order, debug)
+
+    return
