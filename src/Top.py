@@ -7,6 +7,6 @@ import Constants
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    mainWindow = MainWindow(test=False, port=Constants.ALLEN_PORT)
+    mainWindow = MainWindow(test=True, port=Constants.ALLEN_PORT)
 
     sys.exit(app.exec_())

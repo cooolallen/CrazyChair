@@ -56,12 +56,9 @@ class MainWindow(QMainWindow):
 
 		self.voltageTimer = QTimer()
 		self.voltageTimer.start(150)		# update every 0.15 second
-		self.vibrateTimer = QTimer()
-		self.vibrateTimer.start(3000)		# vibrate every 3 second
 		self.guiTimer = QTimer()
 		self.guiTimer.start(0)
 		self.cm = plt.get_cmap('cool')
-		self.init = False					# will be removed when hand-shake is added
 		self.recorder = None
 		self.time = None
 		self.measure = None
@@ -79,7 +76,6 @@ class MainWindow(QMainWindow):
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
 		self.ui.actionRecord_Data.triggered.connect(self.recordData)
 		self.guiTimer.timeout.connect(self.guiUpdate)
-		self.vibrateTimer.timeout.connect(self.vibrateTest)
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
@@ -95,26 +91,16 @@ class MainWindow(QMainWindow):
 
 
 	def voltageUpdate(self):
-		# skip the first update to making sure we get the whole string
-		if not self.init:
-			self.init = True
-			return
-
 		data = self.arduino.get_pressure()
 		if data:
 			self.time = str(datetime.datetime.now())
-			# self.measure = data
-			self.measure = "\t".join(map(lambda x: str(x/100), data))
+			self.measure = data
 			self.updatePosture()
 
 			# record the data is data recorder is open
 			if self.recorder is not None and self.recorder.recording:
 				posture_id = self.recorder.ui.ComboClass.currentIndex()
-				self.recorder.measure[posture_id].append('\t'.join((self.time, self.measure)))
-
-
-			# send the message as raw binary
-			# self.arduino.write(struct.pack('>B',led_out))
+				self.recorder.measure[posture_id].append((self.time, self.measure))
 
 	def updatePosture(self):
 		curr_predict = self.judge.predict(self.measure)
@@ -149,8 +135,10 @@ class MainWindow(QMainWindow):
 		for class_id, data in self.recorder.measure.items():
 			filename = join(Constants.DATA_DIR, 'class' + str(class_id - 1) + '.txt')
 			with open(filename, 'w+') as file:
-				for row in data:
-					file.write(row)
+				for time, measure in data:
+					txt = list(map(str, measure))
+					row = '\t'.join([time] + txt)
+					file.write(row + '\n')
 
 	def guiUpdate(self):
 		# convert a list of float to 0 ~ 255 in stylesheet format
@@ -163,13 +151,11 @@ class MainWindow(QMainWindow):
 		# convert volt into color
 		def getColorMap(volts, cm):
 			res = []
-			for v in volts.split('\t'):
-				color = cm(int(float(v) / 5.01 * 255))
+			for v in volts:
+				color = cm(int(v / 5.01 * 255))
 				res.append(getFormatColor(color))
 
 			return res
-
-
 
 		# update the pressure heatmap
 		if self.measure is not None:

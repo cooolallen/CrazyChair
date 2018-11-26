@@ -42,6 +42,6 @@ class Judge(object):
 		if self.clf is None:
 			return 0
 
-		x = np.asarray([list(map(float, measure.split('\t')))])
+		x = np.asarray([measure])
 		return self.clf.predict(x)[0]
 		
