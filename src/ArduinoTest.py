@@ -14,4 +14,5 @@ class ArduinoTest(object):
 		return [1 for _ in range(6)]
 
 	def vibrate(self):
+		print("vibration trigger")
 		return

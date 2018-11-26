@@ -86,10 +86,6 @@ class MainWindow(QMainWindow):
 		# Show the main window
 		self.show()
 
-	def vibrateTest(self):
-		self.arduino.vibrate()
-
-
 	def voltageUpdate(self):
 		data = self.arduino.get_pressure()
 		if data:
@@ -112,6 +108,12 @@ class MainWindow(QMainWindow):
 
 		if self.predict['cnt'] >= Constants.consecutiveFactor:
 			self.predict['predict'] = self.predict['curr_predict']
+
+		# sending alarm
+		if self.predict['predict'] in Constants.badPosture and self.predict['cnt'] >= Constants.alernDuration + Constants.consecutiveFactor:
+			self.arduino.vibrate()
+			self.predict['cnt'] = Constants.consecutiveFactor
+
 
 	def recordData(self):
 		self.recorder = DataRecorder(self)
@@ -172,8 +174,6 @@ class MainWindow(QMainWindow):
 		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, filename)))
 		self.ui.imageHolder.show()
 
-
-
 class DataRecorder(QDialog):
 	def __init__(self, parent=None):
 		# UI init
@@ -192,6 +192,7 @@ class DataRecorder(QDialog):
 		self.ui.ComboClass.currentIndexChanged.connect(self.setPosturePicture)
 		self.ui.RecordingButton.clicked.connect(self.recordingClicked)
 		self.guiTimer.timeout.connect(self.guiUpdate)
+		
 		# show the window
 		self.show()
 
@@ -217,3 +218,12 @@ class DataRecorder(QDialog):
 		buttonMsg = 'Stop Recording' if self.recording else 'Start Recording'
 		self.ui.ComboClass.setEnabled(not self.recording)
 		self.ui.RecordingButton.setText(buttonMsg)
+
+''' The class to control all the alarm related function'''
+class Alarm(object):
+	def __init__(self, parent):
+		self.status = 0
+		self.parent = parent
+		
+
+
