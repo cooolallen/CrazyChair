@@ -172,8 +172,6 @@ class MainWindow(QMainWindow):
 		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, filename)))
 		self.ui.imageHolder.show()
 
-
-
 class DataRecorder(QDialog):
 	def __init__(self, parent=None):
 		# UI init

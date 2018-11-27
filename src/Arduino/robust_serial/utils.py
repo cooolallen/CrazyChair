@@ -53,12 +53,15 @@ def get_serial_ports():
 
     results = []
     for port in ports:
+        
         try:
-            s = serial.Serial(port)
-            s.close()
-            results.append(port)
+            if 'Bluetooth-Incoming-Port' not in port:     # prevent using Bluetooth-incoming-port
+                s = serial.Serial(port)
+                s.close()
+                results.append(port)
         except (OSError, serial.SerialException):
             pass
+
     return results
 
 
