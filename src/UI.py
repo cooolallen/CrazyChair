@@ -124,8 +124,9 @@ class MainWindow(QMainWindow):
 		self.recorder.finished.connect(self.recordDataClose)
 
 	def judgeStatusCheck(self):
+		# Check the data is available or not only when it is not in testing mode
 		# Show the data recorder window if there are no data
-		if self.judge.clf is None:
+		if not Constants.test and self.judge.clf is None:
 			QMessageBox.warning(self, 'warning', 'Please record some data to initialize the service')
 			self.recordData()
 
