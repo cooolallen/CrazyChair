@@ -8,10 +8,7 @@ class ArduinoTest(object):
 
 	# mimic the behavior of arduino
 	def get_pressure(self):
-		# msg = "\t".join([str(random.randint(0, 501) / 100) for _ in range(6)]) + '\n'
-
-		# return msg.encode('utf-8')
-		return [1 for _ in range(6)]
+		return [random.randint(0, 515) / 100 for _ in range(6)]
 
 	def vibrate(self):
 		print("vibration trigger")

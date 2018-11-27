@@ -3,7 +3,6 @@ from __future__ import print_function, division, unicode_literals, absolute_impo
 import struct
 from enum import Enum
 
-
 class Order(Enum):
     """
     Pre-defined orders
@@ -117,7 +116,7 @@ def send_command(f, order, value, debug=False):
     elif order==Order.RESISTOR.value:
         r_lst=[]
         for _ in range(6):
-            r_lst.append(read_i16(f))
+            r_lst.append(read_i16(f) / NUM_SAMPLE )
         print(r_lst)
     # elif order==Order.VIBRATOR:
         # do nothing
@@ -138,7 +137,7 @@ def get_pressure(f, debug=False):
     write_i8(f, Order.RESISTOR.value)
     r_lst=[]
     for _ in range(6):
-        r_lst.append(read_i16(f))
+        r_lst.append(read_i16(f) / 100)
     
     # ack from arduino
     r_order=read_order(f)

@@ -23,7 +23,7 @@ from matplotlib import pyplot as plt
 from os.path import join
 import os
 
-
+''' The enum class for the postures '''
 class Posture(Enum):
 	empty = 0
 	normal = 1
@@ -46,23 +46,24 @@ class Posture(Enum):
 		else:
 			return 'legOnRight'
        
-
+''' The class to handle the mainwindow and logic. '''
 class MainWindow(QMainWindow):
-	def __init__(self, test=False, port=None, parent=None):
+	def __init__(self, test=Constants.test, parent=None):
 		# UI init
 		super(MainWindow, self).__init__(parent)
 		self.ui = Ui_MainWindow()
 		self.ui.setupUi(self)
 
 		self.voltageTimer = QTimer()
-		self.voltageTimer.start(150)		# update every 0.15 second
+		self.voltageTimer.start(Constants.updateRate)		# update every 0.15 second
 		self.guiTimer = QTimer()
 		self.guiTimer.start(0)
 		self.cm = plt.get_cmap('cool')
+		self.alarm = Alarm(self)
+		self.judge = Judge()
 		self.recorder = None
 		self.time = None
 		self.measure = None
-		self.judge = Judge()
 		self.predict = {'predict':1, 'cnt':0, 'curr_predict':None}
 
 
@@ -106,13 +107,16 @@ class MainWindow(QMainWindow):
 			self.predict['curr_predict'] = curr_predict
 			self.predict['cnt'] = 1
 
+		# update the predict only when it is greater than consecutive factor
+		# to prevent the prediction change in a very short time
 		if self.predict['cnt'] >= Constants.consecutiveFactor:
 			self.predict['predict'] = self.predict['curr_predict']
 
-		# sending alarm
-		if self.predict['predict'] in Constants.badPosture and self.predict['cnt'] >= Constants.alernDuration + Constants.consecutiveFactor:
-			self.arduino.vibrate()
-			self.predict['cnt'] = Constants.consecutiveFactor
+		# update the alarm status
+		if self.predict['predict'] not in Constants.goodPosture:
+			self.alarm.tick()
+		else:
+			self.alarm.reset()
 
 
 	def recordData(self):
@@ -154,7 +158,7 @@ class MainWindow(QMainWindow):
 		def getColorMap(volts, cm):
 			res = []
 			for v in volts:
-				color = cm(int(v / 5.01 * 255))
+				color = cm(int(v / 5.15 * 255))
 				res.append(getFormatColor(color))
 
 			return res
@@ -174,6 +178,7 @@ class MainWindow(QMainWindow):
 		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, filename)))
 		self.ui.imageHolder.show()
 
+''' The class for the data recorder dialog. '''
 class DataRecorder(QDialog):
 	def __init__(self, parent=None):
 		# UI init
@@ -219,11 +224,36 @@ class DataRecorder(QDialog):
 		self.ui.ComboClass.setEnabled(not self.recording)
 		self.ui.RecordingButton.setText(buttonMsg)
 
-''' The class to control all the alarm related function'''
+''' The class to control all the alarm related function. '''
 class Alarm(object):
-	def __init__(self, parent):
-		self.status = 0
+	def __init__(self, parent=None):
 		self.parent = parent
+		self.timer = Constants.alarmParams.copy()
+
+	def reset(self):
+		self.timer = Constants.alarmParams.copy()
+
+	def tick(self):
+		self.not_lst = []
+		for k in self.timer.keys():
+			self.timer[k] -= 1
+			if self.timer[k] == 0:
+				# timer timeout
+				self.timer[k] = Constants.alarmParams[k]
+				self.notify(k)
+
+
+	def notify(self, notType):
+		print(notType, 'has been triggered')
+		if notType == 'vibrate':
+			self.parent.arduino.vibrate()
+		elif notType == 'pop_out':
+			QMessageBox.warning(self.parent, 'warning', 'Warning!! You are not sitting well!')
+		elif notType == 'phone':
+			self.sending_phone_notification()
+		else:
+			print('warning: key %s not found for the notification type' % (notType))
+
 		
 
 

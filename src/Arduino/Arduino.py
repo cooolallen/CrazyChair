@@ -1,8 +1,7 @@
-
-from Arduino.robust_serial import Order, write_i8, write_i16, read_i8, read_i16
-from Arduino.robust_serial import write_order, read_order, decode_order, send_command
-from Arduino.robust_serial import get_pressure, vibrate
-from Arduino.robust_serial.utils import open_serial_port
+from .robust_serial import Order, write_i8, write_i16, read_i8, read_i16
+from .robust_serial import write_order, read_order, decode_order, send_command
+from .robust_serial import get_pressure, vibrate
+from .robust_serial.utils import open_serial_port
 
 import time
 import serial
@@ -36,7 +35,7 @@ class Arduino(object):
 		print("Connected to Arduino")
 		self.serial.flush()
 
-
+	''' Get the list of float of voltage from 6 analog pins'''
 	def get_pressure(self):
 		return get_pressure(self.serial)
 
