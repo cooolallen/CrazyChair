@@ -15,12 +15,10 @@ class Arduino(object):
 
 	def initialize(self):
 		try:
-			# self.serial=open_serial_port(baudrate=115200, timeout=None)
-			self.serial = serial.Serial(port='/dev/cu.usbmodem1421',baudrate=115200, timeout=None)
+			self.serial=open_serial_port(baudrate=115200, timeout=None)
 		except Exception as e:
 			raise e
-
-		print(self.serial)
+			
 		# Initialize communication with Arduino
 		while not self.is_connected:
 			print("Waiting for arduino...")
