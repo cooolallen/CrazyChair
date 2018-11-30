@@ -34,13 +34,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QComboBox" name="ComboClass">
-           <item>
-            <property name="text">
-             <string>Please select a posture</string>
-            </property>
-           </item>
-          </widget>
+          <widget class="QComboBox" name="ComboClass"/>
          </item>
          <item>
           <spacer name="verticalSpacer_2">

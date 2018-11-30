@@ -24,7 +24,6 @@ class Ui_DataRecorder(object):
         self.verticalLayout.addItem(spacerItem)
         self.ComboClass = QtWidgets.QComboBox(DataRecorder)
         self.ComboClass.setObjectName("ComboClass")
-        self.ComboClass.addItem("")
         self.verticalLayout.addWidget(self.ComboClass)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
@@ -59,6 +58,5 @@ class Ui_DataRecorder(object):
     def retranslateUi(self, DataRecorder):
         _translate = QtCore.QCoreApplication.translate
         DataRecorder.setWindowTitle(_translate("DataRecorder", "Data Recorder"))
-        self.ComboClass.setItemText(0, _translate("DataRecorder", "Please select a posture"))
         self.RecordingButton.setText(_translate("DataRecorder", "Start Recording"))
 

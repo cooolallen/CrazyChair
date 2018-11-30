@@ -11,6 +11,7 @@ from PyQt5.QtGui import QPixmap, QKeySequence, QGuiApplication
 
 from ArduinoTest import ArduinoTest
 from SVM import Judge
+from Alarm import Alarm
 from Arduino.Arduino import Arduino
 import Constants
 
@@ -60,7 +61,7 @@ class MainWindow(QMainWindow):
 		self.guiTimer.start(0)
 		self.cm = plt.get_cmap('cool')
 		self.alarm = Alarm(self)
-		self.judge = Judge()
+		self.judge = Judge(Constants.DATA_DIR)
 		self.recorder = None
 		self.time = None
 		self.measure = None
@@ -140,7 +141,7 @@ class MainWindow(QMainWindow):
 	def dumpStoringData(self):
 		# dump the recording data when data recorder is done. (press ok)
 		for class_id, data in self.recorder.measure.items():
-			filename = join(Constants.DATA_DIR, 'class' + str(class_id - 1) + '.txt')
+			filename = join(Constants.DATA_DIR, 'class' + str(class_id) + '.txt')
 			with open(filename, 'w+') as file:
 				for time, measure in data:
 					txt = list(map(str, measure))
@@ -167,8 +168,8 @@ class MainWindow(QMainWindow):
 		# update the pressure heatmap
 		if self.measure is not None:
 			colors = getColorMap(self.measure, self.cm)
-			self.ui.bottomBack.setStyleSheet('QWidget { background: %s }' % colors[0])
-			self.ui.bottomLeft.setStyleSheet('QWidget { background: %s }' % colors[1])
+			self.ui.bottomLeft.setStyleSheet('QWidget { background: %s }' % colors[0])
+			self.ui.bottomBack.setStyleSheet('QWidget { background: %s }' % colors[1])
 			self.ui.bottomRight.setStyleSheet('QWidget { background: %s }' % colors[2])
 			self.ui.backLeft.setStyleSheet('QWidget { background: %s }' % colors[3])
 			self.ui.backRight.setStyleSheet('QWidget { background: %s }' % colors[4])
@@ -203,7 +204,7 @@ class DataRecorder(QDialog):
 		self.show()
 
 	def updateComboBox(self):
-		for i in range(1, len(Posture)):
+		for i in range(len(Posture)):
 			self.ui.ComboClass.addItem(str(Posture(i)))
 
 	def setPosturePicture(self, value):
@@ -212,10 +213,10 @@ class DataRecorder(QDialog):
 		self.ui.imageHolder.show()
 
 	def recordingClicked(self):
-		# pop out a warning window if posture id is selected
-		if self.ui.ComboClass.currentIndex() == 0:
-			QMessageBox.warning(self, 'warning', 'You need to select a posture to record the data')
-			return
+		# # pop out a warning window if posture id is selected
+		# if self.ui.ComboClass.currentIndex() == 0:
+		# 	QMessageBox.warning(self, 'warning', 'You need to select a posture to record the data')
+		# 	return
 
 		self.recording = not self.recording
 		# using guiUpdate to update the gui
@@ -224,37 +225,4 @@ class DataRecorder(QDialog):
 		buttonMsg = 'Stop Recording' if self.recording else 'Start Recording'
 		self.ui.ComboClass.setEnabled(not self.recording)
 		self.ui.RecordingButton.setText(buttonMsg)
-
-''' The class to control all the alarm related function. '''
-class Alarm(object):
-	def __init__(self, parent=None):
-		self.parent = parent
-		self.timer = Constants.alarmParams.copy()
-
-	def reset(self):
-		self.timer = Constants.alarmParams.copy()
-
-	def tick(self):
-		self.not_lst = []
-		for k in self.timer.keys():
-			self.timer[k] -= 1
-			if self.timer[k] == 0:
-				# timer timeout
-				self.timer[k] = Constants.alarmParams[k]
-				self.notify(k)
-
-
-	def notify(self, notType):
-		print(notType, 'has been triggered')
-		if notType == 'vibrate':
-			self.parent.arduino.vibrate()
-		elif notType == 'pop_out':
-			QMessageBox.warning(self.parent, 'warning', 'Warning!! You are not sitting well!')
-		elif notType == 'phone':
-			self.sending_phone_notification()
-		else:
-			print('warning: key %s not found for the notification type' % (notType))
-
-		
-
 
