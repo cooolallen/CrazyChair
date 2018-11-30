@@ -28,11 +28,14 @@ class Alarm(object):
 		if notType == 'vibrate':
 			self.parent.arduino.vibrate()
 		elif notType == 'pop_out':
-			QMessageBox.warning(None, 'warning', 'Warning!! You are not sitting well!')
+			self.showWarning()
 		elif notType == 'phone':
 			self.sending_phone_notification()
 		else:
 			print('warning: key %s not found for the notification type' % (notType))
+
+	def showWarning(self):
+		self.parent.warning.show()
 
 	def sending_phone_notification(self):
 		# using email as our first step

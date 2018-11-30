@@ -1,6 +1,6 @@
 IMG_DIR = '../images'
 DATA_DIR = '../data'			
-test = False			
+test = True			
 normalize = False			
 updateRate = 150					# update rate in ms
 consecutiveFactor = 5				# when predict is more than consecutiveFactor, we set the real prediction as curr_prediction
