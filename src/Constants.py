@@ -1,6 +1,7 @@
 IMG_DIR = '../images'
 DATA_DIR = '../data'			
-test = False						
+test = False			
+normalize = False			
 updateRate = 150					# update rate in ms
 consecutiveFactor = 5				# when predict is more than consecutiveFactor, we set the real prediction as curr_prediction
 goodPosture = {0, 1, 2}				# the value of the normal posture
