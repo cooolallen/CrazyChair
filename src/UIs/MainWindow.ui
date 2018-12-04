@@ -168,6 +168,7 @@
     </item>
    </layout>
   </widget>
+  <widget class="QStatusBar" name="statusbar"/>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -182,13 +183,18 @@
      <string>CrazyChair</string>
     </property>
     <addaction name="actionRecord_Data"/>
+    <addaction name="actionSetting"/>
    </widget>
    <addaction name="menuCrazyChair"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
   <action name="actionRecord_Data">
    <property name="text">
-    <string>Record Data</string>
+    <string> Record Data</string>
+   </property>
+  </action>
+  <action name="actionSetting">
+   <property name="text">
+    <string> Setting</string>
    </property>
   </action>
  </widget>

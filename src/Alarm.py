@@ -5,29 +5,41 @@ from Email import PostOfficer
 from PyQt5.QtWidgets import QMessageBox
 
 class Alarm(object):
-	def __init__(self, parent=None):
+	def __init__(self, defaultParams, parent=None):
 		self.parent = parent
-		self.timer = Constants.alarmParams.copy()
+		self.initialState = defaultParams
 		self.postOfficer = PostOfficer()
+		self.updateParams = None
+		self.reset()
 
 	def reset(self):
-		self.timer = Constants.alarmParams.copy()
+		self.timer = self.initialState.copy()
+
+	def updateInitialState(self):
+		self.initialState = self.updateParams
+		self.reset()
+
+	def getInitialState(self):
+		return self.initialState
 
 	def tick(self):
+		if self.updateParams is not None:
+			self.updateInitialState()
+			self.updateParams = None
+
 		self.not_lst = []
 		for k in self.timer.keys():
 			self.timer[k] -= 1
 			if self.timer[k] == 0:
 				# timer timeout
-				self.timer[k] = Constants.alarmParams[k]
+				self.timer[k] = self.initialState[k]
 				self.notify(k)
-
 
 	def notify(self, notType):
 		print(notType, 'has been triggered')
 		if notType == 'vibrate':
 			self.parent.arduino.vibrate()
-		elif notType == 'pop_out':
+		elif notType == 'pop_up':
 			self.showWarning()
 		elif notType == 'phone':
 			self.sending_phone_notification()

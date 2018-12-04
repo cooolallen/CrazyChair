@@ -2,12 +2,14 @@
 # pyuic5 MainWindow.ui -o ui_MainWindow.py
 # pyuic5 RecordData.ui -o ui_RecordData.py
 # pyuic5 Warning.ui -o ui_Warning.py
+# pyuic5 Setting.ui -o ui_Setting.py
 
 from PyQt5.QtWidgets import QMainWindow, QDialog, QShortcut, QMessageBox
 
 from UIs.ui_MainWindow import Ui_MainWindow
 from UIs.ui_RecordData import Ui_DataRecorder
 from UIs.ui_Warning import Ui_Warning
+from UIs.ui_Setting import Ui_Setting
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtGui import QPixmap, QKeySequence, QGuiApplication
@@ -26,6 +28,7 @@ from collections import defaultdict
 from matplotlib import pyplot as plt
 from os.path import join
 import os
+
 
 ''' The enum class for the postures '''
 class Posture(Enum):
@@ -63,10 +66,11 @@ class MainWindow(QMainWindow):
 		self.guiTimer = QTimer()
 		self.guiTimer.start(0)
 		self.cm = plt.get_cmap('cool')
-		self.alarm = Alarm(self)
+		self.alarm = Alarm(Constants.alarmParams, parent=self)
 		self.judge = Judge(Constants.DATA_DIR)
-		self.warning = Warning()
+		self.warning = Warning(parent=self)
 		self.recorder = None
+		self.setting = Setting(self.alarm.getInitialState())
 		self.time = None
 		self.measure = None
 		self.predict = {'predict':1, 'cnt':0, 'curr_predict':None}
@@ -81,16 +85,22 @@ class MainWindow(QMainWindow):
 		# Connection
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
 		self.ui.actionRecord_Data.triggered.connect(self.recordData)
+		self.ui.actionSetting.triggered.connect(self.showSetting)
+		self.setting.finished.connect(self.settingClose)
 		self.guiTimer.timeout.connect(self.guiUpdate)
 
 		# ShortCut
 		self.ui.actionRecord_Data.setShortcut("Ctrl+D")
+		self.ui.actionSetting.setShortcut("Ctrl+S")
 
 		# Check is there are the data valid or not
 		self.judgeStatusCheck()
 
 		# Show the main window
 		self.show()
+
+		# Show and locate the warning message manually
+		self.warning.show()
 
 	def voltageUpdate(self):
 		data = self.arduino.get_pressure()
@@ -123,7 +133,6 @@ class MainWindow(QMainWindow):
 		else:
 			self.alarm.reset()
 
-
 	def recordData(self):
 		self.recorder = DataRecorder(self)
 		self.recorder.finished.connect(self.recordDataClose)
@@ -138,6 +147,8 @@ class MainWindow(QMainWindow):
 	def recordDataClose(self, val):
 		if val == 1:
 			self.dumpStoringData()
+
+		self.recorder.finished.disconnect(self.recordDataClose)
 		self.recorder = None
 		self.judge.initialize()
 		self.judgeStatusCheck()
@@ -183,6 +194,15 @@ class MainWindow(QMainWindow):
 		filename = str(Posture(self.predict['predict'])) + '.png'
 		self.ui.imageHolder.setPixmap(QPixmap(join(Constants.IMG_DIR, filename)))
 		self.ui.imageHolder.show()
+
+	def showSetting(self):
+		self.setting.initialize(self.alarm.getInitialState())
+
+	def settingClose(self, val):
+		if val == 1:
+			# When close the window with committing the change
+			self.alarm.updateParams = self.setting.getSetting()
+
 
 ''' The class for the data recorder dialog. '''
 class DataRecorder(QDialog):
@@ -240,8 +260,48 @@ class Warning(QDialog):
 
 		# connection
 		self.ui.OKButton.clicked.connect(self.hide)
-	
+
+''' Setting '''
+class Setting(QDialog):
+	def __init__(self, currSetting, parent=None):
+		# UI init
+		super(QDialog, self).__init__(parent)
+		self.ui = Ui_Setting()
+		self.ui.setupUi(self)
+
+	def initialize(self, currSetting):
+		vibrateFlag = 'vibrate' in currSetting
+		popupFlag = 'pop_up' in currSetting
+		phoneFlag = 'phone' in currSetting
+			
+		vibrateCnt = str(currSetting['vibrate']) if vibrateFlag else ''
+		popupCnt = str(currSetting['pop_up']) if popupFlag else ''
+		phoneCnt = str(currSetting['phone']) if phoneFlag else ''
+
+		self.ui.checkVibrate.setChecked(vibrateFlag)
+		self.ui.checkPopUp.setChecked(popupFlag)
+		self.ui.checkPhone.setChecked(phoneFlag)
+		self.ui.textVibrate.setText(vibrateCnt)
+		self.ui.textPopUp.setText(popupCnt)
+		self.ui.textPhone.setText(phoneCnt)
+
 		self.show()
 
+	def getSetting(self):
+		# todo only allowing integers
+		params = {}
+		print(self.ui.checkVibrate.isChecked())
+		if self.ui.checkVibrate.isChecked():
+			vibrateCnt = self.ui.textVibrate.toPlainText()
+			params['vibrate'] = int(vibrateCnt)
 
+		if self.ui.checkPopUp.isChecked():
+			popupCnt = self.ui.textPopUp.toPlainText()
+			params['pop_up'] = int(popupCnt)
 
+		if self.ui.checkPhone.isChecked():
+			phoneCnt = self.ui.textPhone.toPlainText()
+			params['phone'] = int(phoneCnt)
+
+		print('new setting :', params)
+		return params
