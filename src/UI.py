@@ -79,10 +79,11 @@ class MainWindow(QMainWindow):
 
 		# check it is test mode or not (arduino don't need to connect)
 		try:
-			self.arduino = ArduinoTest()
+			self.arduino = Arduino()
 		except:
 			print('using monk arduino')
-			self.arduino = Arduino()
+			self.arduino = ArduinoTest()
+			
 
 		# Connection
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
