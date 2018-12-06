@@ -29,6 +29,7 @@ from matplotlib import pyplot as plt
 from os.path import join
 import os
 
+import sys
 
 ''' The enum class for the postures '''
 class Posture(Enum):
@@ -77,10 +78,12 @@ class MainWindow(QMainWindow):
 
 
 		# check it is test mode or not (arduino don't need to connect)
-		if test:
-			self.arduino = ArduinoTest()
-		else:
+		try:
 			self.arduino = Arduino()
+		except:
+			print('using monk arduino')
+			self.arduino = ArduinoTest()
+			
 
 		# Connection
 		self.voltageTimer.timeout.connect(self.voltageUpdate)
@@ -100,7 +103,7 @@ class MainWindow(QMainWindow):
 		self.show()
 
 		# Show and locate the warning message manually
-		self.warning.show()
+		self.warning.showWarning()
 
 	def voltageUpdate(self):
 		data = self.arduino.get_pressure()
@@ -257,9 +260,20 @@ class Warning(QDialog):
 		super(QDialog, self).__init__(parent)
 		self.ui = Ui_Warning()
 		self.ui.setupUi(self)
+		self.pos = self.geometry()
 
 		# connection
-		self.ui.OKButton.clicked.connect(self.hide)
+		self.ui.OKButton.clicked.connect(self.hideWarning)
+
+	def showWarning(self):
+		if not self.isVisible():
+			self.setGeometry(self.pos)
+			self.show()
+
+	def hideWarning(self):
+		self.pos = self.geometry()
+		self.hide()
+
 
 ''' Setting '''
 class Setting(QDialog):

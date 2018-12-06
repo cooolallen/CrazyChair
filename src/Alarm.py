@@ -47,7 +47,7 @@ class Alarm(object):
 			print('warning: key %s not found for the notification type' % (notType))
 
 	def showWarning(self):
-		self.parent.warning.show()
+		self.parent.warning.showWarning()
 
 	def sending_phone_notification(self):
 		# using email as our first step
