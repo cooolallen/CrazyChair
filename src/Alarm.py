@@ -3,6 +3,7 @@
 import Constants
 from Email import PostOfficer
 from PyQt5.QtWidgets import QMessageBox
+import datetime
 
 class Alarm(object):
 	def __init__(self, defaultParams, parent=None):
@@ -36,7 +37,7 @@ class Alarm(object):
 				self.notify(k)
 
 	def notify(self, notType):
-		print(notType, 'has been triggered')
+		print(str(datetime.datetime.now()), notType, 'has been triggered')
 		if notType == 'vibrate':
 			self.parent.arduino.vibrate()
 		elif notType == 'pop_up':
